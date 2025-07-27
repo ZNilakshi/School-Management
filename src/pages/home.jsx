@@ -1,10 +1,18 @@
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 const WelcomePage = () => {
+  const navigate = useNavigate();
+
   const handleGoogleLogin = () => {
-    // Placeholder – integrate with Firebase or OAuth here
-    console.log("Google login clicked");
+    // Redirect to Spring Boot's OAuth2 authorization endpoint
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
+    const redirectUri = `${window.location.origin}/oauth2/redirect`;
+    
+    // Using navigate instead of window.location.href for SPA navigation
+    // Note: For external OAuth flow, we still need full page redirect
+    window.location.href = `${backendUrl}/api/oauth2/authorize/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   return (
