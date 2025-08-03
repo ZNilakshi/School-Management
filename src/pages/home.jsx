@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { verifyToken } from '../api/auth'; 
 
 const WelcomePage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await verifyToken();
+        if (user?.name && user.name !== "anonymous") {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.log("Not authenticated");
+      }
+    };
+    checkAuth();
+  }, [navigate]);
   const handleGoogleLogin = () => {
-    // Redirect to Spring Boot's OAuth2 authorization endpoint
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
-    const redirectUri = `${window.location.origin}/oauth2/redirect`;
-    
-    // Using navigate instead of window.location.href for SPA navigation
-    // Note: For external OAuth flow, we still need full page redirect
-    window.location.href = `${backendUrl}/api/oauth2/authorize/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+   
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080'}/oauth2/authorization/google`;
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-white">
